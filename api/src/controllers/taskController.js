@@ -7,8 +7,15 @@ pool.on('connect', () => {
   console.log('Client connected to database!')
 })
 
+/**
+ * Add a new maintenance task to the database.
+ * 
+ * @param {Object} req is express request object
+ * @param {Object} res is express response object
+ */
 const addTask = async (req, res) => {
   const { descr, prio, mode, deviceid } = req.body
+  // Check that all the required fields have been given
   if (!descr || !prio || !mode || !deviceid) {
     errorMsg.error = 'Required fields are: descr, prio, mode, deviceid'
     return res.status(400).json(errorMsg)
@@ -27,6 +34,12 @@ const addTask = async (req, res) => {
   }
 }
 
+/**
+ * List all maintenance tasks from the database.
+ * 
+ * @param {Object} req is express request object
+ * @param {Object} res is express response object
+ */
 const getAllTasks = async (req, res) => {
   const sql = `SELECT taskid, entry_date, descr, prio, mode, deviceid
                FROM task
@@ -43,6 +56,12 @@ const getAllTasks = async (req, res) => {
   }
 }
 
+/**
+ * Get information about a single maintenance task by its id.
+ * 
+ * @param {Object} req is express request object
+ * @param {Object} res is express response object
+ */
 const getTaskById = async (req, res) => {
   const sql = `SELECT taskid, entry_date, descr, prio, mode, deviceid
                FROM task
@@ -61,6 +80,13 @@ const getTaskById = async (req, res) => {
   }
 }
 
+/**
+ * List all maintenance tasks that are pointed for a specific device by
+ * the device id.
+ * 
+ * @param {Object} req is express request object
+ * @param {Object} res is express response object
+ */
 const getTasksByDevice = async (req, res) => {
   const sql = `SELECT taskid, entry_date, descr, prio, mode, deviceid
                FROM task
@@ -85,6 +111,12 @@ const getTasksByDevice = async (req, res) => {
   }
 }
 
+/**
+ * Delete a maintenance task from the database that matches the given id.
+ * 
+ * @param {Object} req is express request object
+ * @param {Object} res is express response object
+ */
 const deleteTask = async (req, res) => {
   const sql = 'DELETE FROM task WHERE taskid = $1 returning *'
   const taskid = req.params.id
@@ -103,11 +135,16 @@ const deleteTask = async (req, res) => {
   }
 }
 
-// Create and return the sql query for the updateTask-function
+/**
+ * Create and return the sql query for the updateTask-function
+ * 
+ * @param {Object} cols is a req.body object with some key-pair values
+ */
 const updateQuery = (cols) => {
   const sql = ['UPDATE task SET']
   const set = []
   let i = 1
+  // Allow only specific keys that match the ones allowed in UPDATE-query
   Object.keys(cols).forEach((key) => {
     if (key === 'descr' || key === 'prio' || key === 'mode') {
       set.push(`${key} = $${i++}`)
@@ -118,6 +155,13 @@ const updateQuery = (cols) => {
   return sql.join(' ')
 }
 
+/**
+ * Update the column values of a single maintenance task. Columns
+ * that can be updated are 'descr', 'prio' and 'mode'
+ * 
+ * @param {Object} req is express request object
+ * @param {Object} res is express response object
+ */
 const updateTask = async (req, res) => {
   const taskid = req.params.id
   const sql = updateQuery(req.body)
@@ -146,6 +190,7 @@ pool.on('remove', () => {
   console.log('Client removed from database!')
 })
 
+// Export the functions
 module.exports = {
   addTask,
   getAllTasks,

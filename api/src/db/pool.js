@@ -1,5 +1,6 @@
 const { Pool } = require('pg')
 
+// Init pool for database connections
 const pool = new Pool({
   user: 'worker',
   host: 'db',
