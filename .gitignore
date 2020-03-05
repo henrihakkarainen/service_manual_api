@@ -1,0 +1,9 @@
+# ignore node_modules
+node_modules/
+
+.DS_Store
+
+# ignore .db .log and .class files
+*.db
+*.log
+*.class
