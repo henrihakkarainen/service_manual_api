@@ -97,23 +97,23 @@ Remember to shut down the containers after leaving the application so that the r
 The following requests and paths are supported:
 
 GET-request to:
-- `http://localhost:3000/tasks`
+- `http://localhost:3000/api/tasks`
   - list all tasks
-- `http://localhost:3000/tasks/id`
+- `http://localhost:3000/api/tasks/id`
   - get information about a single task with given taskid
-- `http://localhost:3000/tasks/device/id`
+- `http://localhost:3000/api/tasks/device/id`
   - list all tasks that are pointed to a device with given deviceid
 
 POST-request to:
-- `http://localhost:3000/tasks`
+- `http://localhost:3000/api/tasks`
   - create a new task
 
 PUT-request to:
-- `http://localhost:3000/tasks/id`
+- `http://localhost:3000/api/tasks/id`
   - update a task with given taskid
 
 DELETE-request to:
-- `http://localhost:3000/tasks/id`
+- `http://localhost:3000/api/tasks/id`
   - delete a task with given taskid
 
 ### Payloads
@@ -121,14 +121,14 @@ DELETE-request to:
 The following payloads are required to make POST- or PUT-requests.
 
 POST-request to:
-- `http://localhost:3000/tasks`
+- `http://localhost:3000/api/tasks`
   - JSON-object that has the following keys: descr, prio, mode, deviceid
   - Example: {"descr": "Some description", "prio": "important", "mode": "open", "deviceid": 8}
 
 If some of the keys are missing, and error-response is returned. Error occurs also if descr, prio or mode fields have inappropriate values or a corresponding device for the deviceid does not exist on the database.
 
 PUT-request to:
-- `http://localhost:3000/tasks/id`
+- `http://localhost:3000/api/tasks/id`
   - JSON-object that has one or more of the following keys: descr, prio, mode
   - Example 1: {"descr": "Change the valve", "prio": "critical"}
   - Example 2: {"mode": "done"}
