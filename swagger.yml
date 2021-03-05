@@ -1,0 +1,215 @@
+swagger: "2.0"
+info:
+  description: "This is a API for creating maintenance tasks for factory devices."
+  version: "1.0.0"
+  title: "Service Manual API"
+  contact:
+    name: "Henri Hakkarainen"
+    email: "hakkarainenhenri@gmail.com"
+host: "localhost:3000"
+basePath: "/api"
+tags:
+- name: "task"
+  description: "Operations for tasks"
+schemes:
+- "http"
+paths:
+  /tasks:
+    post:
+      tags:
+      - "task"
+      summary: "Add a new task to the database"
+      description: ""
+      operationId: "addTask"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Task object that is going to be created"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            description:
+              type: "string"
+            priority:
+              type: "string"
+            mode:
+              type: "string"
+            deviceid:
+              type: "integer"
+              format: "int64"
+      responses:
+        "201":
+          description: "Operation successful"
+          schema:
+            $ref: "#/definitions/Task"
+        "400":
+          description: "Invalid input"
+        "500":
+          description: "Operation failed"
+    get:
+      tags:
+      - "task"
+      summary: "Receive a list of all tasks"
+      description: ""
+      operationId: "getTasks"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "deviceId"
+        in: "query"
+        description: "DeviceID that is to be considered for filtering results"
+        required: false
+        type: "integer"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Task"
+        "400":
+          description: "Invalid deviceId value provided"
+        "404":
+          description: "Device matching query parameter was not found"
+        "500":
+          description: "Operation failed"
+  /tasks/{taskId}:
+    get:
+      tags:
+      - "task"
+      summary: "Find a specific task by ID"
+      description: "Returns a single task"
+      operationId: "getTaskById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "taskId"
+        in: "path"
+        description: "ID of task to return"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Operation successful"
+          schema:
+            $ref: "#/definitions/Task"
+        "404":
+          description: "Task not found"
+        "500":
+          description: "Operation failed"
+    put:
+      tags:
+      - "task"
+      summary: "Updates an existing task"
+      description: ""
+      operationId: "updateTaskById"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "taskId"
+        in: "path"
+        description: "ID of task that needs to be updated"
+        required: true
+        type: "integer"
+      - name: "body"
+        in: "body"
+        description: "Updated task object"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            description:
+              type: "string"
+            priority:
+              type: "string"
+            mode:
+              type: "string"
+      responses:
+        "200":
+          description: "Operation successful"
+          schema:
+            $ref: "#/definitions/Task"
+        "400":
+          description: "Invalid input values"
+        "404":
+          description: "Task not found"
+        "500":
+          description: "Operation failed"
+    delete:
+      tags:
+      - "task"
+      summary: "Deletes a single task"
+      description: ""
+      operationId: "deleteTask"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "taskId"
+        description: "ID of the task that is to be deleted"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Task deleted"
+        "404":
+          description: "Task not found"
+        "500":
+          description: "Operation failed"
+
+definitions:
+  Device:
+    type: "object"
+    properties:
+      deviceid:
+        type: "integer"
+        format: "int64"
+        description: "Unique identifier of the device"
+      dname:
+        type: "string"
+        description: "Name of the device"
+      dyear:
+        type: "integer"
+        description: "Year when device taken into use"
+      dtype:
+        type: "string"
+        description: "Type of the device"
+  Task:
+    type: "object"
+    properties:
+      taskid:
+        type: "integer"
+        format: "int64"
+        description: "Unique identifier of the task"
+      entrydate:
+        type: "string"
+        description: "Date of entry"
+      description:
+        type: "string"
+        description: "Description of the task"
+      priority:
+        type: "string"
+        description: "Priority of the task"
+        enum:
+        - "critical"
+        - "important"
+        - "slight"
+      mode:
+        type: "string"
+        description: "Current state of the task"
+        enum:
+        - "open"
+        - "done"
+      deviceid:
+        type: "integer"
+        format: "int64"
+        description: "ID of the device the task is pointed at"
