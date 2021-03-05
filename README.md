@@ -101,8 +101,8 @@ GET-request to:
   - list all tasks
 - `http://localhost:3000/api/tasks/id`
   - get information about a single task with given taskid
-- `http://localhost:3000/api/tasks/device/id`
-  - list all tasks that are pointed to a device with given deviceid
+- `http://localhost:3000/api/tasks?deviceId={deviceId}`
+  - list all tasks that are pointed to a device with given deviceId query parameter
 
 POST-request to:
 - `http://localhost:3000/api/tasks`
@@ -122,21 +122,21 @@ The following payloads are required to make POST- or PUT-requests.
 
 POST-request to:
 - `http://localhost:3000/api/tasks`
-  - JSON-object that has the following keys: descr, prio, mode, deviceid
-  - Example: {"descr": "Some description", "prio": "important", "mode": "open", "deviceid": 8}
+  - JSON-object that has the following keys: description, priority, mode, deviceid
+  - Example: {"description": "Some description", "priority": "important", "mode": "open", "deviceid": 8}
 
-If some of the keys are missing, and error-response is returned. Error occurs also if descr, prio or mode fields have inappropriate values or a corresponding device for the deviceid does not exist on the database.
+If some of the keys are missing or have empty values, an error-response is returned. Error occurs also if priority or mode fields have inappropriate values or a corresponding device for the deviceid does not exist on the database.
 
 PUT-request to:
 - `http://localhost:3000/api/tasks/id`
-  - JSON-object that has one or more of the following keys: descr, prio, mode
-  - Example 1: {"descr": "Change the valve", "prio": "critical"}
+  - JSON-object that has one or more of the following keys: description, priority, mode
+  - Example 1: {"description": "Change the valve", "priority": "critical"}
   - Example 2: {"mode": "done"}
 
 While updating the maintenance task, it is possible to modify the description, priority and/or mode fields. Other columns of the table can not be changed after the initial creation on the database.
 
 ### Suitable values and max length
-- descr - string with a maximum length of 200 characters
-- prio - string that may have one of the following values: critical, important, slight
+- description - string with a maximum length of 200 characters
+- priority - string that may have one of the following values: critical, important, slight
 - mode - string that may have either of the following values: open, done
 - deviceid - integer with a restriction that a device with the given integer must exist at the device-table. If using the initial state of the database, only usable deviceid's are between 1-10.
