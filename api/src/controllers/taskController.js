@@ -14,16 +14,16 @@ pool.on('connect', () => {
  * @param {Object} res is express response object
  */
 const addTask = async (req, res) => {
-  const { descr, prio, mode, deviceid } = req.body
+  const { description, priority, mode, deviceid } = req.body
   // Check that all the required fields have been given
-  if (!descr || !prio || !mode || !deviceid) {
-    errorMsg.error = 'Required fields are: descr, prio, mode, deviceid'
+  if (!description || !priority || !mode || !deviceid) {
+    errorMsg.error = 'Required fields are: description, priority, mode, deviceid and those values can\'t be empty'
     return res.status(400).json(errorMsg)
   }
-  const sql = `INSERT INTO task (descr, prio, mode, deviceid)
+  const sql = `INSERT INTO task (description, priority, mode, deviceid)
                VALUES ($1, LOWER($2), LOWER($3), $4)
                returning *;`
-  const values = [descr, prio, mode, deviceid]
+  const values = [description, priority, mode, deviceid]
   try {
     const { rows } = await pool.query(sql, values)
     successMsg.data = rows[0]
@@ -41,10 +41,10 @@ const addTask = async (req, res) => {
  * @param {Object} res is express response object
  */
 const getAllTasks = async (req, res) => {
-  const sql = `SELECT taskid, entry_date, descr, prio, mode, deviceid
+  const sql = `SELECT taskid, entry_date, description, priority, mode, deviceid
                FROM task
-               ORDER BY CASE WHEN LOWER(prio) = 'critical' THEN '1'
-                             WHEN LOWER(prio) = 'important' THEN '2'
+               ORDER BY CASE WHEN LOWER(priority) = 'critical' THEN '1'
+                             WHEN LOWER(priority) = 'important' THEN '2'
                              ELSE '3'
                         END ASC, entry_date DESC`
   try {
@@ -63,7 +63,7 @@ const getAllTasks = async (req, res) => {
  * @param {Object} res is express response object
  */
 const getTaskById = async (req, res) => {
-  const sql = `SELECT taskid, entry_date, descr, prio, mode, deviceid
+  const sql = `SELECT taskid, entry_date, description, priority, mode, deviceid
                FROM task
                WHERE taskid = $1`
   const taskid = req.params.id
@@ -88,11 +88,11 @@ const getTaskById = async (req, res) => {
  * @param {Object} res is express response object
  */
 const getTasksByDevice = async (req, res) => {
-  const sql = `SELECT taskid, entry_date, descr, prio, mode, deviceid
+  const sql = `SELECT taskid, entry_date, description, priority, mode, deviceid
                FROM task
                WHERE deviceid = $1
-               ORDER BY CASE WHEN LOWER(prio) = 'critical' THEN '1'
-                             WHEN LOWER(prio) = 'important' THEN '2'
+               ORDER BY CASE WHEN LOWER(priority) = 'critical' THEN '1'
+                             WHEN LOWER(priority) = 'important' THEN '2'
                              ELSE '3'
                         END ASC, entry_date DESC`
   const deviceid = req.params.id
@@ -146,7 +146,7 @@ const updateQuery = (cols) => {
   let i = 1
   // Allow only specific keys that match the ones allowed in UPDATE-query
   Object.keys(cols).forEach((key) => {
-    if (key === 'descr' || key === 'prio' || key === 'mode') {
+    if (key === 'description' || key === 'priority' || key === 'mode') {
       set.push(`${key} = $${i++}`)
     }
   })
@@ -167,7 +167,7 @@ const updateTask = async (req, res) => {
   const sql = updateQuery(req.body)
   const values = []
   Object.keys(req.body).forEach((key) => {
-    if (key === 'descr' || key === 'prio' || key === 'mode') {
+    if (key === 'description' || key === 'priority' || key === 'mode') {
       values.push(req.body[key])
     }
   })

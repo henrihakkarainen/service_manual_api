@@ -13,17 +13,17 @@ CREATE TABLE device (
 CREATE TABLE task (
   taskid SERIAL,
   entry_date TIMESTAMP DEFAULT current_timestamp,
-  descr VARCHAR(200) NOT NULL,
-  prio VARCHAR(20) NOT NULL,
+  description VARCHAR(200) NOT NULL,
+  priority VARCHAR(20) NOT NULL,
   mode VARCHAR(20) NOT NULL,
   deviceid INTEGER NOT NULL,
   PRIMARY KEY (taskid),
   FOREIGN KEY (deviceid) REFERENCES device,
-  CHECK (prio IN ('critical', 'important', 'slight')),
+  CHECK (priority IN ('critical', 'important', 'slight')),
   CHECK (mode IN ('open', 'done'))
 );
 
-/* insert some devices to database */
+/* insert some devices to database on creation */
 INSERT INTO device (dname, dyear, dtype) VALUES ('Device 1', 2004, 'Type 19');
 INSERT INTO device (dname, dyear, dtype) VALUES ('Device 2', 1987, 'Type 2');
 INSERT INTO device (dname, dyear, dtype) VALUES ('Device 3', 1995, 'Type 9');
