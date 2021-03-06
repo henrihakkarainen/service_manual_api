@@ -207,7 +207,12 @@ const updateTask = async (req, res) => {
   const values = []
   Object.keys(req.body).forEach((key) => {
     if (key === 'description' || key === 'priority' || key === 'mode') {
-      values.push(req.body[key])
+      if (req.body[key]) {
+        values.push(req.body[key])
+      } else {
+        errorMsg.error = `Invalid value on field '${key}', value can't be empty`
+        return res.status(400).json(errorMsg)
+      }      
     }
   })
   values.push(taskid)
