@@ -58,7 +58,7 @@ CMD ["npm", "run", "dev"]
 
 With these changes, nodemon is used to restart the server automatically when changes are made to the code. Installing the required packages for you own computer is required to make this work and it can be done with following command:
 
-`cd /api && npm install`
+`cd api/ && npm install`
 
 ## Installation
 Download the contents of this folder to your computer. At project root run the following command to build the Docker container:
@@ -90,6 +90,17 @@ Database: factory_db
 Remember to shut down the containers after leaving the application so that the reserved ports are released:
 
 `docker-compose down`
+
+## Unit tests
+
+Some unit tests have been created for testing different API endpoints. These are not covering
+everything and more tests can (or should) be added later. You can run the unit tests while inside api-directory with command:
+
+`npm run test`
+
+If inside project root this can be done by a single command:
+
+`cd api/ && npm run test`
 
 ## Instructions for API testing
 ### Paths
@@ -136,7 +147,7 @@ PUT-request to:
 While updating the maintenance task, it is possible to modify the description, priority and/or mode fields. Other columns of the table can not be changed after the initial creation on the database.
 
 ### Suitable values and max length
-- description - string with a maximum length of 200 characters
+- description - string with a maximum length of 200 characters, can't be an empty string
 - priority - string that may have one of the following values: critical, important, slight
 - mode - string that may have either of the following values: open, done
 - deviceid - integer with a restriction that a device with the given integer must exist at the device-table. If using the initial state of the database, only usable deviceid's are between 1-10.
