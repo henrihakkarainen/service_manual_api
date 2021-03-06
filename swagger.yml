@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: "This is a API for creating maintenance tasks for factory devices."
+  description: "This is an API for creating maintenance tasks for factory devices."
   version: "1.0.0"
   title: "Service Manual API"
   contact:
@@ -10,7 +10,7 @@ host: "localhost:3000"
 basePath: "/api"
 tags:
 - name: "task"
-  description: "Operations for tasks"
+  description: "Operations for maintenance tasks"
 schemes:
 - "http"
 paths:
@@ -46,16 +46,25 @@ paths:
         "201":
           description: "Operation successful"
           schema:
-            $ref: "#/definitions/Task"
+            type: "object"
+            properties:
+              status:
+                type: "string"
+              data:
+                $ref: "#/definitions/Task"
         "400":
           description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "500":
           description: "Operation failed"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     get:
       tags:
       - "task"
-      summary: "Receive a list of all tasks"
-      description: ""
+      summary: "Receive a list of all tasks or just tasks of a single device"
+      description: "Query parameter deviceId can be provided to filter the results to return a list of tasks of a single device instead"
       operationId: "getTasks"
       consumes:
       - "application/json"
@@ -76,10 +85,16 @@ paths:
               $ref: "#/definitions/Task"
         "400":
           description: "Invalid deviceId value provided"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Device matching query parameter was not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "500":
           description: "Operation failed"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /tasks/{taskId}:
     get:
       tags:
@@ -102,8 +117,12 @@ paths:
             $ref: "#/definitions/Task"
         "404":
           description: "Task not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "500":
           description: "Operation failed"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     put:
       tags:
       - "task"
@@ -137,13 +156,24 @@ paths:
         "200":
           description: "Operation successful"
           schema:
-            $ref: "#/definitions/Task"
+            type: "object"
+            properties:
+              status:
+                type: "string"
+              data:
+                $ref: "#/definitions/Task"
         "400":
           description: "Invalid input values"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "404":
           description: "Task not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "500":
           description: "Operation failed"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     delete:
       tags:
       - "task"
@@ -161,28 +191,23 @@ paths:
       responses:
         "200":
           description: "Task deleted"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+              data:
+                $ref: "#/definitions/Task"
         "404":
           description: "Task not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         "500":
           description: "Operation failed"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
 definitions:
-  Device:
-    type: "object"
-    properties:
-      deviceid:
-        type: "integer"
-        format: "int64"
-        description: "Unique identifier of the device"
-      dname:
-        type: "string"
-        description: "Name of the device"
-      dyear:
-        type: "integer"
-        description: "Year when device taken into use"
-      dtype:
-        type: "string"
-        description: "Type of the device"
   Task:
     type: "object"
     properties:
@@ -213,3 +238,11 @@ definitions:
         type: "integer"
         format: "int64"
         description: "ID of the device the task is pointed at"
+  ErrorResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+      error:
+        type: "string"
+        description: "Error message from the server"
