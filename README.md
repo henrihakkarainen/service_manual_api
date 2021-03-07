@@ -112,7 +112,7 @@ The following requests and paths are supported:
 GET-request to:
 - `http://localhost:3000/api/tasks`
   - list all tasks
-- `http://localhost:3000/api/tasks/id`
+- `http://localhost:3000/api/tasks/:id`
   - get information about a single task with given taskid
 - `http://localhost:3000/api/tasks?deviceId={deviceId}`
   - list all tasks that are pointed to a device with given deviceId query parameter
@@ -122,11 +122,11 @@ POST-request to:
   - create a new task
 
 PUT-request to:
-- `http://localhost:3000/api/tasks/id`
+- `http://localhost:3000/api/tasks/:id`
   - update a task with given taskid
 
 DELETE-request to:
-- `http://localhost:3000/api/tasks/id`
+- `http://localhost:3000/api/tasks/:id`
   - delete a task with given taskid
 
 ### Payloads
@@ -141,7 +141,7 @@ POST-request to:
 If some of the keys are missing or have empty values, an error-response is returned. Error occurs also if priority or mode fields have inappropriate values or a corresponding device for the deviceid does not exist on the database.
 
 PUT-request to:
-- `http://localhost:3000/api/tasks/id`
+- `http://localhost:3000/api/tasks/:id`
   - JSON-object that has one or more of the following keys: description, priority, mode
   - Example 1: {"description": "Change the valve", "priority": "critical"}
   - Example 2: {"mode": "done"}
