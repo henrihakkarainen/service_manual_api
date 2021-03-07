@@ -121,7 +121,7 @@ const getAllTasks = async (req, res) => {
       return res.status(200).json(rows)
     }
   } catch (err) {
-    errorMsg.error = err
+    errorMsg.error = 'Unknown server error occurred'
     return res.status(500).json(errorMsg)
   }
 }
@@ -145,7 +145,7 @@ const getTaskById = async (req, res) => {
     }
     return res.status(200).json(rows[0])
   } catch (err) {
-    errorMsg.error = err
+    errorMsg.error = 'Unknown server error occurred, check that id is a number'
     return res.status(500).json(errorMsg)
   }
 }
@@ -169,7 +169,7 @@ const deleteTask = async (req, res) => {
       return res.status(404).json(errorMsg)
     }
   } catch (err) {
-    errorMsg.error = err
+    errorMsg.error = 'Unknown server error occurred, check that id is a number'
     return res.status(500).json(errorMsg)
   }
 }
@@ -203,6 +203,9 @@ const updateQuery = (cols) => {
  */
 const updateTask = async (req, res) => {
   const taskid = req.params.id
+  if (Object.keys(req.body).length === 0) {
+    return res.status(204).json({})
+  }
   const sql = updateQuery(req.body)
   const values = []
   Object.keys(req.body).forEach((key) => {
@@ -219,7 +222,7 @@ const updateTask = async (req, res) => {
   try {
     const { rows } = await pool.query(sql, values)
     if (!rows[0]) {
-      errorMsg.error = `Task with given id ${taskid} was not found`
+      errorMsg.error = `Task with given id (${taskid}) was not found`
       return res.status(404).json(errorMsg)
     }
     successMsg.data = rows[0]

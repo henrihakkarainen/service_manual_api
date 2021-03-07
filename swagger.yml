@@ -162,6 +162,8 @@ paths:
                 type: "string"
               data:
                 $ref: "#/definitions/Task"
+        "204":
+          description: "No request body provided so nothing happens"
         "400":
           description: "Invalid input values"
           schema:
