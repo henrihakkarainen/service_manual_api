@@ -47,6 +47,7 @@ describe('API endpoint unit tests', () => {
         .end((err, res) => {
           expect(res).to.have.status(400)
           expect(res.body).to.have.property('status')
+          expect(res.body).to.have.property('error')
           expect(res.body.status).to.equal('error')
           done()
         })
@@ -66,6 +67,7 @@ describe('API endpoint unit tests', () => {
         .end((err, res) => {
           expect(res).to.have.status(400)
           expect(res.body).to.have.property('status')
+          expect(res.body).to.have.property('error')
           expect(res.body.status).to.equal('error')
           done()
         })
@@ -85,6 +87,7 @@ describe('API endpoint unit tests', () => {
         .end((err, res) => {
           expect(res).to.have.status(400)
           expect(res.body).to.have.property('status')
+          expect(res.body).to.have.property('error')
           expect(res.body.status).to.equal('error')
           done()
         })
@@ -105,15 +108,31 @@ describe('API endpoint unit tests', () => {
           done()
         })
     })
+  })
 
-    // This test needs some improvements to really check that only tasks of a single device are returned
-    it('should return list of tasks of a single device filtered by query parameter', (done) => {
+  describe('GET-request to /api/tasks?deviceId={deviceId}', () => {
+    it('should return list of tasks of a single device when filtered by query parameter', (done) => {
       chai.request(baseURL)
         .get(`/api/tasks?deviceId=${newTaskBody.deviceid}`)
         .end((err, res) => {
           expect(res).to.have.status(200)
           expect(res.body).to.be.an('array')
           expect(res.body).to.not.have.lengthOf(0)
+          res.body.forEach(task => {
+            expect(task.deviceid).to.be.equal(newTaskBody.deviceid)
+          })
+          done()
+        })
+    })
+
+    it('should return 404 Not Found if device with query parameter deviceId is not found', (done) => {
+      chai.request(baseURL)
+        .get('/api/tasks?deviceId=1111')
+        .end((err, res) => {
+          expect(res).to.have.status(404)
+          expect(res.body).to.have.property('status')
+          expect(res.body).to.have.property('error')
+          expect(res.body.status).to.equal('error')
           done()
         })
     })
@@ -134,10 +153,11 @@ describe('API endpoint unit tests', () => {
 
     it('should return a 404 Not Found when no tasks matching the id parameter are found', (done) => {
       chai.request(baseURL)
-        .get('/api/tasks/123')
+        .get('/api/tasks/12345')
         .end((err, res) => {
           expect(res).to.have.status(404)
           expect(res.body).to.have.property('status')
+          expect(res.body).to.have.property('error')
           expect(res.body.status).to.equal('error')
           done()
         })
@@ -180,7 +200,36 @@ describe('API endpoint unit tests', () => {
         .end((err, res) => {
           expect(res).to.have.status(400)
           expect(res.body).to.have.property('status')
+          expect(res.body).to.have.property('error')
           expect(res.body.status).to.equal('error')
+          done()
+        })
+    })
+
+    it('should return a 404 Not Found when no tasks matching the id parameter are found', (done) => {
+      const updateTaskBody = {
+        description: 'Updating the description',
+        priority: 'important',
+        mode: 'done'
+      }
+
+      chai.request(baseURL)
+        .put('/api/tasks/12345')
+        .send(updateTaskBody)
+        .end((err, res) => {
+          expect(res).to.have.status(404)
+          expect(res.body).to.have.property('status')
+          expect(res.body).to.have.property('error')
+          expect(res.body.status).to.equal('error')
+          done()
+        })
+    })
+
+    it('should return a 204 if trying to update without providing any body', (done) => {
+      chai.request(baseURL)
+        .put(`/api/tasks/${taskId}`)
+        .end((err, res) => {
+          expect(res).to.have.status(204)
           done()
         })
     })
@@ -192,6 +241,9 @@ describe('API endpoint unit tests', () => {
         .delete(`/api/tasks/${taskId}`)
         .end((err, res) => {
           expect(res).to.have.status(200)
+          expect(res.body).to.have.property('status')
+          expect(res.body).to.have.property('data')
+          expect(res.body.status).to.equal('success')
           done()
         })
     })
@@ -201,6 +253,9 @@ describe('API endpoint unit tests', () => {
         .delete(`/api/tasks/${taskId}`)
         .end((err, res) => {
           expect(res).to.have.status(404)
+          expect(res.body).to.have.property('status')
+          expect(res.body).to.have.property('error')
+          expect(res.body.status).to.equal('error')
           done()
         })
     })
